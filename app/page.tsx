@@ -1,11 +1,11 @@
-import React from 'react'
+import NewExpense from "@/components/NewExpense";
 
 const page = () => {
   return (
-    <div className='w-full p-8'>
-      Expense tracker
+    <div className="w-full p-8">
+      <NewExpense />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        montserrat: ["var(--font-montserrat)"],
+        Montserrat: ["var(--font-montserrat)"],
       },
       keyframes: {
         "accordion-down": {
