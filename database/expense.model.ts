@@ -17,3 +17,5 @@ const ExpenseSchema = new Schema<IExpense>({
 });
 
 const Expense = models.Expense || model<IExpense>("Expense", ExpenseSchema);
+
+export default Expense;

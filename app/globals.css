@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .heading-1 {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold;
+  }
+
+  .paragraph {
+    @apply text-base md:text-lg lg:text-xl;
+  }
+}

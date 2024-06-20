@@ -1,9 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,7 +10,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import {
   Select,
   SelectContent,
@@ -22,6 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createExpense } from "@/lib/actions/expense.action";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+type props = {
+  mongoUserId: string;
+};
 
 const formSchema = z.object({
   expenseName: z
@@ -33,14 +36,24 @@ const formSchema = z.object({
   paymentMethod: z.enum(["Cash", "Card", "Bank Transfer", "Other"]),
 });
 
-function onSubmit(data: z.infer<typeof formSchema>) {
-  console.log(data);
-}
-
-const NewExpense = () => {
+const NewExpense = ({ mongoUserId }: props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    try {
+      await createExpense({
+        name: data.expenseName,
+        amount: data.amount,
+        paymentMethod: data.paymentMethod,
+        user: JSON.parse(mongoUserId),
+      });
+    } catch (error) {
+      console.error("⚠️Error submitting expense: ", error);
+      throw error;
+    }
+  }
   return (
     <div>
       <Form {...form}>
