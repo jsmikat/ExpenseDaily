@@ -5,6 +5,11 @@ export interface CreateExpenseParams {
   amount: number;
   paymentMethod: string;
   user: string | null;
+  path: string;
+}
+
+export interface GetExpensesParams {
+  user: string;
 }
 
 export interface CreateUserParams {

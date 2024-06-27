@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { createExpense } from "@/lib/actions/expense.action";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -37,6 +38,8 @@ const formSchema = z.object({
 });
 
 const NewExpense = ({ mongoUserId }: props) => {
+  const router = useRouter();
+  const path = usePathname();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -48,7 +51,9 @@ const NewExpense = ({ mongoUserId }: props) => {
         amount: data.amount,
         paymentMethod: data.paymentMethod,
         user: JSON.parse(mongoUserId),
+        path,
       });
+      router.refresh();
     } catch (error) {
       console.error("⚠️Error submitting expense: ", error);
       throw error;
