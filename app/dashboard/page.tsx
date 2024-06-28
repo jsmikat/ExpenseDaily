@@ -28,7 +28,7 @@ async function Dashboard() {
             />
           </div>
           <div className="border-2 border-dark-200 p-8 rounded-lg shadow-sm">
-            <NewExpense mongoUserId={JSON.stringify(mongoUser?._id)} />
+            <NewExpense mongoUserId={JSON.stringify(mongoUser?._id)} type="create"/>
           </div>
         </div>
         <div className="flex-grow border-2 border-dark-200 p-4 rounded-lg shadow-sm">

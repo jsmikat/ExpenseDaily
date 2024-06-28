@@ -5,9 +5,23 @@ export interface CreateExpenseParams {
   amount: number;
   paymentMethod: string;
   user: string | null;
+  createdAt: Date;
   path: string;
 }
 
+export interface UpdateExpenseParams {
+  expenseId: string;
+  name: string;
+  amount: number;
+  paymentMethod: string;
+  createdAt: Date;
+  path: string;
+}
+
+export interface DeleteExpenseParams {
+  expenseId: string;
+  path: string;
+}
 export interface GetExpensesParams {
   user: string;
 }

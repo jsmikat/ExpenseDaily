@@ -7,12 +7,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { IExpense } from "@/database/expense.model";
 import { formatDate } from "@/lib/utils";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Schema } from "mongoose";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import NewExpense from "./NewExpense";
+
+interface Expenses {
+  _id: string;
+  name: string;
+  amount: number;
+  createdAt: Date;
+  user: Schema.Types.ObjectId;
+}
 
 interface Props {
-  expenses: IExpense[];
+  expenses: Expenses[];
 }
 
 function ExpensesTable({ expenses }: Props) {
@@ -27,11 +43,26 @@ function ExpensesTable({ expenses }: Props) {
       </TableHeader>
       <TableBody>
         {expenses.map((expense, index) => (
-          <TableRow key={index} onClick={() => console.log("Clicked")}>
-            <TableCell>{formatDate(expense.createdAt)}</TableCell>
-            <TableCell>{expense.name}</TableCell>
-            <TableCell className="text-right">${expense.amount} </TableCell>
-          </TableRow>
+          <Dialog key={index}>
+            <DialogTrigger asChild className="cursor-pointer">
+              <TableRow>
+                <TableCell>{formatDate(expense.createdAt)}</TableCell>
+                <TableCell>{expense.name}</TableCell>
+                <TableCell className="text-right">${expense.amount} </TableCell>
+              </TableRow>
+            </DialogTrigger>
+            <DialogContent className="rounded-lg">
+              <DialogHeader>
+                <DialogTitle>
+                  <h1>Edit</h1>
+                </DialogTitle>
+                <DialogDescription>
+                  <p>You can edit your expenses</p>
+                </DialogDescription>
+              </DialogHeader>
+              <NewExpense type="edit" expenseId={expense._id} />
+            </DialogContent>
+          </Dialog>
         ))}
       </TableBody>
     </Table>
