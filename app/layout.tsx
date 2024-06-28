@@ -1,13 +1,14 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { neobrutalism } from "@clerk/themes";
 import type { Metadata } from "next";
-import { Inter, Montserrat } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const montserrat = Montserrat({ 
+const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-montserrat",
- });
+});
 
 export const metadata: Metadata = {
   title: "Expense tracker",
@@ -22,7 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider
+          appearance={{
+            baseTheme: neobrutalism,
+            variables: {
+              colorPrimary: "#FDA10D",
+            },
+          }}
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );

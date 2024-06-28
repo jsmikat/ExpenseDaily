@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -6,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { IExpense } from "@/database/expense.model";
 import { formatDate } from "@/lib/utils";
 
@@ -25,7 +27,7 @@ function ExpensesTable({ expenses }: Props) {
       </TableHeader>
       <TableBody>
         {expenses.map((expense, index) => (
-          <TableRow key={index}>
+          <TableRow key={index} onClick={() => console.log("Clicked")}>
             <TableCell>{formatDate(expense.createdAt)}</TableCell>
             <TableCell>{expense.name}</TableCell>
             <TableCell className="text-right">${expense.amount} </TableCell>

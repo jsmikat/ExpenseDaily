@@ -58,7 +58,7 @@ async function OnThisMonth({ userId, date }: { userId: string; date: Date }) {
 
   return (
     <div className="font-bold text-xl">
-      Total This Month: <span className="text-red-400">{total} Tk</span>
+      Total This Month: <span className="text-danger-200">{total} Tk</span>
     </div>
   );
 }

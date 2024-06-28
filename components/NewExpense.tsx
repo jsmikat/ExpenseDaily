@@ -123,7 +123,7 @@ const NewExpense = ({ mongoUserId }: props) => {
             )}
           />
           {/* </div> */}
-          <Button type="submit">Submit</Button>
+          <Button className="w-full bg-primary-400 hover:bg-primary-200" type="submit">Submit</Button>
         </form>
       </Form>
     </div>

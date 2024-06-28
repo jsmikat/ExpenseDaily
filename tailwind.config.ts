@@ -18,6 +18,24 @@ const config = {
       },
     },
     extend: {
+      colors: {
+        primary: {
+          200: "#FDB849",
+          400: "#FDA10D",
+        },
+        danger: {
+          200: "#C82D44",
+          400: "#A62639",
+        },
+        dark: {
+          200: "#E3DEE3",
+          400: "#080708",
+        },
+        light: {
+          200: "#2C262C",
+          400: "#AAEEBA",
+        },
+      },
       fontFamily: {
         Montserrat: ["var(--font-montserrat)"],
       },
