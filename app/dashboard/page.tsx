@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getExpenses } from "@/lib/actions/expense.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 
 async function Dashboard() {
@@ -19,7 +20,7 @@ async function Dashboard() {
   return (
     <div className="w-full py-8 px-8 md:px-24">
       <Navbar />
-      <div className="flex flex-col md:flex-row gap-8 md:gap-16 w-full">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 w-full">
         <div className="flex-grow flex flex-col gap-6">
           <div className="border-2 border-dark-200 p-8 rounded-lg shadow-sm">
             <OnThisMonth
@@ -28,13 +29,33 @@ async function Dashboard() {
             />
           </div>
           <div className="border-2 border-dark-200 p-8 rounded-lg shadow-sm">
-            <NewExpense mongoUserId={JSON.stringify(mongoUser?._id)} type="create"/>
+            <NewExpense
+              mongoUserId={JSON.stringify(mongoUser?._id)}
+              type="create"
+            />
           </div>
         </div>
         <div className="flex-grow border-2 border-dark-200 p-4 rounded-lg shadow-sm">
-          <ScrollArea className="w-full px-4 h-[470px]">
-            <ExpensesTable expenses={expenses || []} />
-          </ScrollArea>
+          {expenses!.length === 0 ? (
+            <div className="flex flex-col items-center justify-center">
+              <Image
+                src="/empty-list.png"
+                height={500}
+                width={500}
+                alt="No data to show"
+              />
+              <h1 className="text-2xl font-bold">No Expenses Recorded</h1>
+              <p className="text-gray-500">
+                Start by adding a new expense to keep track of your spending.
+              </p>
+            </div>
+          ) : (
+            <ScrollArea className="w-full px-4 h-[480px]">
+              <ExpensesTable
+                expenses={JSON.parse(JSON.stringify(expenses)) || []}
+              />
+            </ScrollArea>
+          )}
         </div>
       </div>
     </div>

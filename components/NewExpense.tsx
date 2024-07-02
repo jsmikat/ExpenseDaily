@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { Schema } from "mongoose";
 import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -35,7 +36,13 @@ import { z } from "zod";
 type props = {
   mongoUserId?: string;
   type: "create" | "edit";
-  expenseId?: string;
+  expense?: {
+    _id: string;
+    name: string;
+    amount: number;
+    createdAt: Date;
+    user: Schema.Types.ObjectId;
+  };
 };
 
 const formSchema = z.object({
@@ -49,13 +56,15 @@ const formSchema = z.object({
   date: z.date(),
 });
 
-const NewExpense = ({ mongoUserId, type, expenseId }: props) => {
+const NewExpense = ({ mongoUserId, type, expense }: props) => {
   const router = useRouter();
   const path = usePathname();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date: new Date(),
+      expenseName: expense?.name || "",
+      amount: expense?.amount || 0,
+      date: expense?.createdAt || new Date(),
     },
   });
 
@@ -77,10 +86,10 @@ const NewExpense = ({ mongoUserId, type, expenseId }: props) => {
       }
     }
 
-    if (type === "edit" && expenseId) {
+    if (type === "edit" && expense) {
       try {
         await updateExpense({
-          expenseId: expenseId, //TODO: Add the expenseId here
+          expenseId: expense._id, //TODO: Add the expense here
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
@@ -161,7 +170,7 @@ const NewExpense = ({ mongoUserId, type, expenseId }: props) => {
               name="date"
               render={({ field }) => (
                 <FormItem className="w-full flex flex-col">
-                  <FormLabel>Date of Expense</FormLabel>
+                  <FormLabel className="my-1">Date of Expense</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>

@@ -7,17 +7,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { deleteExpense } from "@/lib/actions/expense.action";
 import { formatDate } from "@/lib/utils";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Schema } from "mongoose";
+import { usePathname } from "next/navigation";
+import NewExpense from "./NewExpense";
+import { Button } from "./ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import NewExpense from "./NewExpense";
 
 interface Expenses {
   _id: string;
@@ -32,6 +36,7 @@ interface Props {
 }
 
 function ExpensesTable({ expenses }: Props) {
+  const path = usePathname();
   return (
     <Table className="mt-4">
       <TableHeader>
@@ -51,7 +56,7 @@ function ExpensesTable({ expenses }: Props) {
                 <TableCell className="text-right">${expense.amount} </TableCell>
               </TableRow>
             </DialogTrigger>
-            <DialogContent className="rounded-lg">
+            <DialogContent className="w-[420px] md:w-full rounded-lg">
               <DialogHeader>
                 <DialogTitle>
                   <h1>Edit</h1>
@@ -60,7 +65,17 @@ function ExpensesTable({ expenses }: Props) {
                   <p>You can edit your expenses</p>
                 </DialogDescription>
               </DialogHeader>
-              <NewExpense type="edit" expenseId={expense._id} />
+              <NewExpense type="edit" expense={expense} />
+              <DialogClose asChild>
+                <Button
+                  onClick={async () =>
+                    await deleteExpense({ expenseId: expense._id, path })
+                  }
+                  className="bg-danger-400"
+                >
+                  Delete
+                </Button>
+              </DialogClose>
             </DialogContent>
           </Dialog>
         ))}
