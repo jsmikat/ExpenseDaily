@@ -79,6 +79,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
           createdAt: data.date,
           path,
         });
+        form.reset();
         router.refresh();
       } catch (error) {
         console.error("⚠️Error submitting expense: ", error);
@@ -89,7 +90,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
     if (type === "edit" && expense) {
       try {
         await updateExpense({
-          expenseId: expense._id, //TODO: Add the expense here
+          expenseId: expense._id,
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,

@@ -59,10 +59,12 @@ function ExpensesTable({ expenses }: Props) {
             <DialogContent className="w-[420px] md:w-full rounded-lg">
               <DialogHeader>
                 <DialogTitle>
-                  <h1>Edit</h1>
+                  <h1 className="font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
+                    Edit Expense
+                  </h1>
                 </DialogTitle>
                 <DialogDescription>
-                  <p>You can edit your expenses</p>
+                  <p>Update Your Expense Details Below</p>
                 </DialogDescription>
               </DialogHeader>
               <NewExpense type="edit" expense={expense} />
