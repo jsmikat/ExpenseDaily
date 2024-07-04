@@ -11,6 +11,7 @@ import { deleteExpense } from "@/lib/actions/expense.action";
 import { formatDate } from "@/lib/utils";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Schema } from "mongoose";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import NewExpense from "./NewExpense";
 import { Button } from "./ui/button";
@@ -28,6 +29,7 @@ interface Expenses {
   name: string;
   amount: number;
   createdAt: Date;
+  paymentMethod: string;
   user: Schema.Types.ObjectId;
 }
 
@@ -53,7 +55,9 @@ function ExpensesTable({ expenses }: Props) {
               <TableRow>
                 <TableCell>{formatDate(expense.createdAt)}</TableCell>
                 <TableCell>{expense.name}</TableCell>
-                <TableCell className="text-right">${expense.amount} </TableCell>
+                <TableCell className="text-right">
+                  {expense.amount} tk
+                </TableCell>
               </TableRow>
             </DialogTrigger>
             <DialogContent className="w-[420px] md:w-full rounded-lg">

@@ -7,7 +7,13 @@ function Navbar() {
         Expense<span className="text-primary-400">Tracker</span>
       </div>
       <div>
-        <UserButton />
+        <UserButton 
+        afterSignOutUrl="/"
+        appearance={{
+          elements: {
+            avatarBox: "h-8 w-8"
+          }
+        }}/>
       </div>
     </div>
   );

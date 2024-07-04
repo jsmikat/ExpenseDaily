@@ -41,6 +41,7 @@ type props = {
     name: string;
     amount: number;
     createdAt: Date;
+    paymentMethod: string;
     user: Schema.Types.ObjectId;
   };
 };
@@ -52,7 +53,7 @@ const formSchema = z.object({
   amount: z
     .number()
     .min(0, { message: "Amount must be a non-negative number" }),
-  paymentMethod: z.enum(["Cash", "Card", "Bank Transfer", "Other"]),
+  paymentMethod: z.string(),
   date: z.date(),
 });
 
@@ -64,6 +65,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
     defaultValues: {
       expenseName: expense?.name || "",
       amount: expense?.amount || 0,
+      paymentMethod: expense?.paymentMethod || "",
       date: expense?.createdAt || new Date(),
     },
   });
@@ -97,13 +99,16 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
           createdAt: data.date,
           path,
         });
-      } catch (error) {}
+      } catch (error) {
+        console.error("⚠️Error updating expense: ", error);
+        throw error;
+      }
     }
   }
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 lg:space-y-8">
           <FormField
             control={form.control}
             name="expenseName"
@@ -150,7 +155,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                   <Select onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a payment method" />
+                        <SelectValue placeholder="Select a payment method"/>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

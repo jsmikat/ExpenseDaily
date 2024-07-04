@@ -19,10 +19,10 @@ async function Dashboard() {
   const today = new Date();
 
   return (
-    <div className="w-full py-8 px-8 md:px-24">
+    <div className="w-screen py-8 px-8 lg:px-24">
       <Navbar />
-      <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 w-full">
-        <div className="flex-grow flex flex-col gap-6">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div className="flex flex-col gap-6">
           <div className="border-2 border-dark-200 p-8 rounded-lg shadow-sm">
             <OnThisMonth
               userId={JSON.stringify(mongoUser?.clerkId)}
@@ -46,9 +46,9 @@ async function Dashboard() {
             <div className="flex flex-col gap-2 items-center justify-center">
               <Image
                 src="/empty-list.png"
-                height={500}
-                width={500}
-                alt="No data to show"
+                height={300}
+                width={300}
+                alt="Empty List"
               />
               <h1 className="text-2xl font-bold">No Expenses Recorded</h1>
               <p className="text-gray-500 text-center">
