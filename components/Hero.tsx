@@ -25,9 +25,12 @@ function Hero() {
               Get Started
             </Link>
             <Link
-              href={"#"}
+              href={"https://github.com/jsmikat/Expense-tracker"}
               target="_blank"
-              className={cn(buttonVariants({ variant: "outline", size: "lg" }), "outline-primary-400")}
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "outline-primary-400"
+              )}
             >
               View on GitHub
             </Link>

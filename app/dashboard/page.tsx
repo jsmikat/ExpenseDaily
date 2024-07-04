@@ -37,7 +37,7 @@ async function Dashboard() {
           </div>
         </div>
         <div
-          className={cn("flex-grow border-dark-200 p-4 rounded-lg", {
+          className={cn("h-full border-dark-200 p-4 rounded-lg", {
             "shadow-sm": expenses!.length > 0,
             "border-2": expenses!.length > 0,
           })}

@@ -8,11 +8,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { deleteExpense } from "@/lib/actions/expense.action";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Schema } from "mongoose";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import NewExpense from "./NewExpense";
 import { Button } from "./ui/button";
 import {
@@ -38,6 +38,7 @@ interface Props {
 }
 
 function ExpensesTable({ expenses }: Props) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const path = usePathname();
   return (
     <Table className="mt-4">
@@ -60,7 +61,7 @@ function ExpensesTable({ expenses }: Props) {
                 </TableCell>
               </TableRow>
             </DialogTrigger>
-            <DialogContent className="w-[420px] md:w-full rounded-lg">
+            <DialogContent className="w-[320px] sm:w-[420px] md:w-full rounded-lg">
               <DialogHeader>
                 <DialogTitle>
                   <h1 className="font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
@@ -74,10 +75,13 @@ function ExpensesTable({ expenses }: Props) {
               <NewExpense type="edit" expense={expense} />
               <DialogClose asChild>
                 <Button
-                  onClick={async () =>
-                    await deleteExpense({ expenseId: expense._id, path })
-                  }
-                  className="bg-danger-400"
+                  onClick={async () => {
+                    setIsSubmitting(true);
+                    await deleteExpense({ expenseId: expense._id, path });
+                    setIsSubmitting(false);
+                  }}
+                  disabled={isSubmitting}
+                  className={cn("bg-danger-400", isSubmitting && "opacity-50")}
                 >
                   Delete
                 </Button>
