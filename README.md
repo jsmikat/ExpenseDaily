@@ -58,20 +58,20 @@ A modern, full-stack expense tracking application built with Next.js 14, featuri
 
 ```
 expense-tracker/
-├── app/                    # Next.js App Router pages
-│   ├── api/               # API routes
-│   ├── dashboard/         # Dashboard pages
-│   └── globals.css        # Global styles
-├── components/            # Reusable components
-│   ├── ui/               # shadcn/ui components
-│   ├── ExpensesTable.tsx # Expense listing component
-│   ├── NewExpense.tsx    # Expense form component
-│   └── OnThisMonth.tsx   # Monthly analytics component
-├── lib/                  # Utility libraries
-│   ├── models/          # MongoDB models
-│   ├── utils.ts         # Helper functions
-│   └── dbConnect.ts     # Database connection
-└── types/               # TypeScript type definitions
+├── app/
+│   ├── api/
+│   ├── dashboard/
+│   └── globals.css
+├── components/
+│   ├── ui/
+│   ├── ExpensesTable.tsx
+│   ├── NewExpense.tsx
+│   └── OnThisMonth.tsx
+├── lib/
+│   ├── models/
+│   ├── utils.ts
+│   └── dbConnect.ts
+└── types/
 ```
 
 ## Getting Started
@@ -126,7 +126,6 @@ expense-tracker/
 
 5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
-
 
 ## 🤝 Contributing
 

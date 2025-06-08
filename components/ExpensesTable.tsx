@@ -58,7 +58,7 @@ function ExpensesTable({ expenses }: Props) {
                 <TableCell>{expense.name}</TableCell>
                 <TableCell className="text-right">
                   {expense.amount} tk
-                </TableCell>
+                </TableCell> 
               </TableRow>
             </DialogTrigger>
             <DialogContent className="w-[320px] sm:w-[420px] md:w-full rounded-lg">
