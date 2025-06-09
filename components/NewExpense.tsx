@@ -40,7 +40,7 @@ interface props {
     _id: string;
     name: string;
     amount: number;
-    createdAt: Date | string;
+    createdAt: Date;
     paymentMethod: string;
     user: Schema.Types.ObjectId;
   };
@@ -51,8 +51,8 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Expense name must be at least 2 characters long" }),
   amount: z.coerce.number({ message: "Amount must be a number" }),
-  paymentMethod: z.string().default("Cash"),
-  date: z.string().date(),
+  paymentMethod: z.string(),
+  date: z.date(),
 });
 
 const NewExpense = ({ mongoUserId, type, expense }: props) => {
@@ -63,20 +63,22 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
     defaultValues: {
       expenseName: expense?.name || "",
       amount: expense?.amount || 0,
-      paymentMethod: expense?.paymentMethod || "",
-      // date: expense?.createdAt || new Date().toLocaleDateString("en-us"),
+      paymentMethod: expense?.paymentMethod || "Cash",
+      date: expense?.createdAt || new Date(),
     },
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (type === "create" && mongoUserId) {
       try {
+        const adjustedDate = new Date(data.date);
+        adjustedDate.setHours(12, 0, 0, 0);
         await createExpense({
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
           user: JSON.parse(mongoUserId),
-          createdAt: new Date(data.date),
+          createdAt: adjustedDate,
           path,
         });
         form.reset();
@@ -88,17 +90,18 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
 
     if (type === "edit" && expense) {
       try {
+        const adjustedDate = new Date(data.date);
+        adjustedDate.setHours(12, 0, 0, 0);
         await updateExpense({
           expenseId: expense._id,
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
-          createdAt: new Date(data.date),
+          createdAt: adjustedDate,
           path,
         });
       } catch (error) {
         console.error("⚠️Error updating expense: ", error);
-        throw error;
       }
     }
   }
@@ -136,7 +139,6 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                     type="number"
                     placeholder="Enter the amount spent (e.g., 50.00)"
                     {...field}
-                    // onChange={(e) => field.onChange(parseFloat(e.target.value))}
                   />
                 </FormControl>
                 <FormMessage />
@@ -198,9 +200,8 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={() => {
-                          console.log("Selected date:", field.value);
-                          field.onChange;
+                        onSelect={(e) => {
+                          field.onChange(e);
                         }}
                         disabled={(date: Date) =>
                           date > new Date() || date < new Date("1900-01-01")
