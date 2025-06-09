@@ -33,7 +33,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-type props = {
+interface props {
   mongoUserId?: string;
   type: "create" | "edit";
   expense?: {
@@ -44,15 +44,13 @@ type props = {
     paymentMethod: string;
     user: Schema.Types.ObjectId;
   };
-};
+}
 
 const formSchema = z.object({
   expenseName: z
     .string()
     .min(2, { message: "Expense name must be at least 2 characters long" }),
-  amount: z
-    .number()
-    .min(0, { message: "Amount must be a non-negative number" }),
+  amount: z.coerce.number({ message: "Amount must be a number" }),
   paymentMethod: z.string(),
   date: z.date(),
 });
@@ -65,7 +63,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
     defaultValues: {
       expenseName: expense?.name || "",
       amount: expense?.amount || 0,
-      paymentMethod: expense?.paymentMethod || "",
+      paymentMethod: expense?.paymentMethod || "Cash",
       date: expense?.createdAt || new Date(),
     },
   });
@@ -73,42 +71,47 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (type === "create" && mongoUserId) {
       try {
+        const adjustedDate = new Date(data.date);
+        adjustedDate.setHours(12, 0, 0, 0);
         await createExpense({
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
           user: JSON.parse(mongoUserId),
-          createdAt: data.date,
+          createdAt: adjustedDate,
           path,
         });
         form.reset();
         router.refresh();
       } catch (error) {
         console.error("⚠️Error submitting expense: ", error);
-        throw error;
       }
     }
 
     if (type === "edit" && expense) {
       try {
+        const adjustedDate = new Date(data.date);
+        adjustedDate.setHours(12, 0, 0, 0);
         await updateExpense({
           expenseId: expense._id,
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
-          createdAt: data.date,
+          createdAt: adjustedDate,
           path,
         });
       } catch (error) {
         console.error("⚠️Error updating expense: ", error);
-        throw error;
       }
     }
   }
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 lg:space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-2 lg:space-y-8"
+        >
           <FormField
             control={form.control}
             name="expenseName"
@@ -117,7 +120,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                 <FormLabel>Expense Name</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder=" Enter the expense name (e.g., Groceries, Rent, Utilities)"
+                    placeholder="Enter the expense name (e.g., Groceries, Rent, Utilities)"
                     {...field}
                   />
                 </FormControl>
@@ -125,7 +128,6 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
               </FormItem>
             )}
           />
-          {/* <div className="flex flex-row gap-4 md:flex-col"> */}
           <FormField
             control={form.control}
             name="amount"
@@ -137,8 +139,6 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                     type="number"
                     placeholder="Enter the amount spent (e.g., 50.00)"
                     {...field}
-                    // This is to change the inserted sting into number
-                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
                   />
                 </FormControl>
                 <FormMessage />
@@ -155,7 +155,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                   <Select onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a payment method"/>
+                        <SelectValue placeholder="Select a payment method" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -200,7 +200,9 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(e) => {
+                          field.onChange(e);
+                        }}
                         disabled={(date: Date) =>
                           date > new Date() || date < new Date("1900-01-01")
                         }

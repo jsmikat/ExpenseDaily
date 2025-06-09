@@ -4,7 +4,7 @@ async function totalExpensesForMonth(
   userId: string,
   year: number,
   month: number
-): Promise<number> {
+) {
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 1);
 
@@ -21,7 +21,7 @@ async function totalExpensesForMonth(
       { $unwind: "$userDetails" },
       {
         $match: {
-          "userDetails.clerkId": JSON.parse(userId),
+          "userDetails.clerkId": userId,
           createdAt: {
             $gte: startDate,
             $lt: endDate,
@@ -40,7 +40,6 @@ async function totalExpensesForMonth(
     return result.length > 0 ? result[0].totalAmount : 0;
   } catch (err) {
     console.error(err);
-    throw new Error("Error calculating monthly expenses");
   }
 }
 
@@ -48,7 +47,7 @@ async function fetchTotalExpensesForMonth(
   userId: string,
   date: Date
 ): Promise<number> {
-  const month = date.getMonth() + 1; // Adjust month to 1-indexed
+  const month = date.getMonth() + 1;
   const year = date.getFullYear();
   return totalExpensesForMonth(userId, year, month);
 }

@@ -12,8 +12,8 @@ import { redirect } from "next/navigation";
 
 async function Dashboard() {
   const { userId } = auth();
-
   if (!userId) redirect("/sign-in");
+
   const mongoUser = await getUserById({ userId });
   const expenses = await getExpenses({ user: mongoUser._id });
   const today = new Date();
@@ -25,7 +25,7 @@ async function Dashboard() {
         <div className="flex flex-col gap-6">
           <div className="border-2 border-dark-200 p-8 rounded-lg shadow-sm">
             <OnThisMonth
-              userId={JSON.stringify(mongoUser?.clerkId)}
+              userId={mongoUser?.clerkId}
               date={today}
             />
           </div>

@@ -14,10 +14,9 @@ export async function createUser(userData: CreateUserParams) {
   try {
     connectToDatabase();
     const newUser = await User.create(userData);
-    return newUser;
+    return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
     console.error("Error creating user: ", error);
-    throw error;
   }
 }
 
@@ -29,7 +28,6 @@ export async function updateUser(userData: UpdateUserParams) {
     revalidatePath(path);
   } catch (error) {
     console.error("Error updating user: ", error);
-    throw error;
   }
 }
 
@@ -59,9 +57,8 @@ export async function getUserById(params: any) {
     connectToDatabase();
     const { userId } = params;
     const user = await User.findOne({ clerkId: userId });
-    return user;
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
     console.error("⚠️Error getting user by ID: ", error);
-    throw error;
   }
 }

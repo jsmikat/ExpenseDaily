@@ -13,13 +13,13 @@ import {
 export async function createExpense(params: CreateExpenseParams) {
   try {
     await connectToDatabase();
-    const { name, amount, paymentMethod, user, createdAt, path } = params;
-    const expense = await Expense.create({
+    const { name, amount, paymentMethod, createdAt, user, path } = params;
+    await Expense.create({
       name,
       amount,
       paymentMethod,
       user,
-      createdAt
+      createdAt,
     });
     revalidatePath(path);
   } catch (error) {
@@ -35,12 +35,11 @@ export async function updateExpense(params: UpdateExpenseParams) {
       name,
       amount,
       paymentMethod,
-      createdAt,
+      createdAt, // Assuming you want to update the createdAt to now
     });
     revalidatePath(path);
   } catch (error) {
     console.log("⚠️Error updating expense");
-    throw error;
   }
 }
 
@@ -52,7 +51,6 @@ export async function deleteExpense(params: DeleteExpenseParams) {
     revalidatePath(path);
   } catch (error) {
     console.log("⚠️Error deleting expense");
-    throw error;
   }
 }
 
@@ -61,7 +59,7 @@ export async function getExpenses(params: GetExpensesParams) {
     await connectToDatabase();
     const { user } = params;
     const expenses = await Expense.find({ user: user });
-    return expenses;
+    return JSON.parse(JSON.stringify(expenses));
   } catch (error) {
     console.log("⚠️Error getting expenses");
   }
