@@ -64,7 +64,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
       expenseName: expense?.name || "",
       amount: expense?.amount || 0,
       paymentMethod: expense?.paymentMethod || "Cash",
-      date: expense?.createdAt || new Date(),
+      date: expense?.createdAt ? new Date(expense.createdAt) : new Date(),
     },
   });
 
@@ -72,7 +72,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
     if (type === "create" && mongoUserId) {
       try {
         const adjustedDate = new Date(data.date);
-        adjustedDate.setHours(12, 0, 0, 0);
+        adjustedDate.setHours(6, 0, 0, 0);
         await createExpense({
           name: data.expenseName,
           amount: data.amount,
@@ -91,13 +91,13 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
     if (type === "edit" && expense) {
       try {
         const adjustedDate = new Date(data.date);
-        adjustedDate.setHours(12, 0, 0, 0);
+        adjustedDate.setHours(6, 0, 0, 0);
         await updateExpense({
           expenseId: expense._id,
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
-          createdAt: adjustedDate,
+          createdAt: data.date,
           path,
         });
       } catch (error) {
@@ -152,7 +152,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Payment Method</FormLabel>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a payment method" />
@@ -177,7 +177,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
               render={({ field }) => (
                 <FormItem className="w-full flex flex-col">
                   <FormLabel className="my-1">Date of Expense</FormLabel>
-                  <Popover>
+                  <Popover modal={true}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -188,10 +188,11 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, "PP")
                           ) : (
                             <span>Pick a date</span>
                           )}
+
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>

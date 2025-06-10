@@ -1,5 +1,5 @@
 {
-  "name": "expense-tracker",
+  "name": "expense-daily",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -26,6 +26,7 @@
     "lucide-react": "^0.394.0",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.1",
+    "motion": "^12.16.0",
     "next": "14.2.3",
     "react": "^18",
     "react-day-picker": "^8.10.1",

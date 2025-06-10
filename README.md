@@ -2,6 +2,8 @@
 
 A modern, full-stack expense tracking application built with Next.js 14, featuring real-time expense management, secure authentication, and comprehensive financial insights.
 
+![ss](./public/ExpenseDaily-full.png)
+
 ## Features
 
 ### Core Functionality
@@ -88,7 +90,7 @@ expense-tracker/
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/jsmikat/Expense-tracker.git
+   git clone https://github.com/jsmikat/ExpenseDaily.git
    cd Expense-tracker
    ```
 
@@ -138,11 +140,3 @@ expense-tracker/
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- [Next.js](https://nextjs.org/) for the incredible React framework
-- [Clerk](https://clerk.com/) for seamless authentication
-- [shadcn/ui](https://ui.shadcn.com/) for beautiful UI components
-- [Tailwind CSS](https://tailwindcss.com/) for utility-first styling
-- [MongoDB](https://www.mongodb.com/) for flexible database solutions

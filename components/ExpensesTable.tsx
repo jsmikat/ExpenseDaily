@@ -8,8 +8,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { deleteExpense } from "@/lib/actions/expense.action";
-import { cn, formatDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { format } from "date-fns";
 import { Schema } from "mongoose";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -54,11 +55,13 @@ function ExpensesTable({ expenses }: Props) {
           <Dialog key={index}>
             <DialogTrigger asChild className="cursor-pointer">
               <TableRow>
-                <TableCell>{formatDate(expense.createdAt)}</TableCell>
+                <TableCell>
+                  {format(new Date(expense.createdAt), "MMM dd")}
+                </TableCell>
                 <TableCell>{expense.name}</TableCell>
                 <TableCell className="text-right">
                   {expense.amount} tk
-                </TableCell> 
+                </TableCell>
               </TableRow>
             </DialogTrigger>
             <DialogContent className="w-[320px] sm:w-[420px] md:w-full rounded-lg">
@@ -72,6 +75,7 @@ function ExpensesTable({ expenses }: Props) {
                   <p>Update Your Expense Details Below</p>
                 </DialogDescription>
               </DialogHeader>
+
               <NewExpense type="edit" expense={expense} />
               <DialogClose asChild>
                 <Button

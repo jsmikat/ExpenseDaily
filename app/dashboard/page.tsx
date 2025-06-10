@@ -19,7 +19,6 @@ async function Dashboard() {
 
   const mongoUser = await getUserById({ userId });
   const expenses = await getExpenses({ user: mongoUser._id });
-  const today = new Date();
 
   const recentExpenses = await generateLast7DaysData(expenses);
 
@@ -33,7 +32,10 @@ async function Dashboard() {
               <AreaChart
                 data={recentExpenses}
                 index="date"
+                className="h-[250px]"
                 categories={["amount"]}
+                yAxisWidth={40}
+                colors={["amber"]}
               />
             </Suspense>
           </div>
@@ -80,21 +82,21 @@ export default Dashboard;
 
 async function generateLast7DaysData(expenses: ExpenseParams[]) {
   const today = new Date();
-
   const expensesByDate: Record<string, number> = {};
 
   expenses.forEach((expense, index) => {
     const expenseDate = new Date(expense.createdAt);
 
-    const utcYear = expenseDate.getUTCFullYear();
-    const utcMonth = String(expenseDate.getUTCMonth() + 1).padStart(2, "0");
-    const utcDay = String(expenseDate.getUTCDate()).padStart(2, "0");
-    const utcDateKey = `${utcYear}-${utcMonth}-${utcDay}`;
+    // No timezone adjustment needed - already in Bangladesh time from DB
+    const year = expenseDate.getFullYear();
+    const month = String(expenseDate.getMonth() + 1).padStart(2, "0");
+    const day = String(expenseDate.getDate()).padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
 
-    if (!expensesByDate[utcDateKey]) {
-      expensesByDate[utcDateKey] = 0;
+    if (!expensesByDate[dateKey]) {
+      expensesByDate[dateKey] = 0;
     }
-    expensesByDate[utcDateKey] += expense.amount;
+    expensesByDate[dateKey] += expense.amount;
   });
 
   const chartData = [];
@@ -103,12 +105,13 @@ async function generateLast7DaysData(expenses: ExpenseParams[]) {
     const targetDate = subDays(today, i);
     const dateKey = format(targetDate, "MMM dd");
 
-    const utcYear = targetDate.getUTCFullYear();
-    const utcMonth = String(targetDate.getUTCMonth() + 1).padStart(2, "0");
-    const utcDay = String(targetDate.getUTCDate()).padStart(2, "0");
-    const utcLookupKey = `${utcYear}-${utcMonth}-${utcDay}`;
+    // Use local date methods (no UTC conversion)
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, "0");
+    const day = String(targetDate.getDate()).padStart(2, "0");
+    const lookupKey = `${year}-${month}-${day}`;
 
-    const totalAmount = expensesByDate[utcLookupKey] || 0;
+    const totalAmount = expensesByDate[lookupKey] || 0;
 
     chartData.push({
       date: dateKey,
