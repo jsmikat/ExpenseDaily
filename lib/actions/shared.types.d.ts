@@ -9,6 +9,15 @@ export interface CreateExpenseParams {
   path: string;
 }
 
+export interface ExpenseParams {
+  _id: string;
+  name: string;
+  amount: number;
+  paymentMethod: string;
+  createdAt: Date;
+  user: string;
+}
+
 export interface UpdateExpenseParams {
   expenseId: string;
   name: string;

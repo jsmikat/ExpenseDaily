@@ -1,35 +1,45 @@
+import { AreaChart } from "@/components/AreaChart";
 import ExpensesTable from "@/components/ExpensesTable";
 import Navbar from "@/components/Navbar";
 import NewExpense from "@/components/NewExpense";
-import OnThisMonth from "@/components/OnThisMonth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getExpenses } from "@/lib/actions/expense.action";
+import { ExpenseParams } from "@/lib/actions/shared.types";
 import { getUserById } from "@/lib/actions/user.action";
 import { cn } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
+import { format, subDays } from "date-fns";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 async function Dashboard() {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
   const mongoUser = await getUserById({ userId });
   const expenses = await getExpenses({ user: mongoUser._id });
-  const today = new Date();
+
+  const recentExpenses = await generateLast7DaysData(expenses);
 
   return (
     <div className="w-screen py-8 px-8 lg:px-24">
       <Navbar />
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div className="flex flex-col gap-6">
-          <div className="border-2 border-dark-200 p-8 rounded-lg shadow-sm">
-            <OnThisMonth
-              userId={mongoUser?.clerkId}
-              date={today}
-            />
+          <div className="border-2 border-dark-200 p-8 rounded-lg shadow-xs">
+            <Suspense fallback={<div>Loading...</div>}>
+              <AreaChart
+                data={recentExpenses}
+                index="date"
+                className="h-[250px]"
+                categories={["amount"]}
+                yAxisWidth={40}
+                colors={["amber"]}
+              />
+            </Suspense>
           </div>
-          <div className="border-2 border-dark-200 p-8 rounded-lg shadow-sm">
+          <div className="border-2 border-dark-200 p-8 rounded-lg shadow-xs">
             <NewExpense
               mongoUserId={JSON.stringify(mongoUser?._id)}
               type="create"
@@ -38,7 +48,7 @@ async function Dashboard() {
         </div>
         <div
           className={cn("h-full border-dark-200 p-4 rounded-lg", {
-            "shadow-sm": expenses!.length > 0,
+            "shadow-xs": expenses!.length > 0,
             "border-2": expenses!.length > 0,
           })}
         >
@@ -69,3 +79,45 @@ async function Dashboard() {
 }
 
 export default Dashboard;
+
+async function generateLast7DaysData(expenses: ExpenseParams[]) {
+  const today = new Date();
+  const expensesByDate: Record<string, number> = {};
+
+  expenses.forEach((expense, index) => {
+    const expenseDate = new Date(expense.createdAt);
+
+    // No timezone adjustment needed - already in Bangladesh time from DB
+    const year = expenseDate.getFullYear();
+    const month = String(expenseDate.getMonth() + 1).padStart(2, "0");
+    const day = String(expenseDate.getDate()).padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
+
+    if (!expensesByDate[dateKey]) {
+      expensesByDate[dateKey] = 0;
+    }
+    expensesByDate[dateKey] += expense.amount;
+  });
+
+  const chartData = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const targetDate = subDays(today, i);
+    const dateKey = format(targetDate, "MMM dd");
+
+    // Use local date methods (no UTC conversion)
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, "0");
+    const day = String(targetDate.getDate()).padStart(2, "0");
+    const lookupKey = `${year}-${month}-${day}`;
+
+    const totalAmount = expensesByDate[lookupKey] || 0;
+
+    chartData.push({
+      date: dateKey,
+      amount: totalAmount,
+    });
+  }
+
+  return chartData;
+}

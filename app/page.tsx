@@ -1,9 +1,9 @@
-import Hero from "@/components/Hero";
+import HeroSection from "@/components/hero-section";
 
 const page = () => {
   return (
-    <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
-      <Hero />
+    <div className="flex flex-col gap-4 items-center justify-center">
+      <HeroSection />
     </div>
   );
 };
