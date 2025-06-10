@@ -1,13 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer utilities {
-  .heading-1 {
-    @apply text-2xl md:text-3xl lg:text-4xl font-bold;
-  }
+@custom-variant dark (&:is(.dark *));
 
-  .paragraph {
-    @apply text-base md:text-lg lg:text-xl;
+@theme {
+  --color-primary-200: #fdb849;
+  --color-primary-400: #fda10d;
+
+  --color-danger-200: #c82d44;
+  --color-danger-400: #a62639;
+
+  --color-dark-200: #e3dee3;
+  --color-dark-400: #080708;
+
+  --color-light-200: #2c262c;
+  --color-light-400: #aaeeba;
+
+  --font-Montserrat: var(--font-montserrat);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 480) {
+    max-width: 480;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility heading-1 {
+  @apply text-2xl md:text-3xl lg:text-4xl font-bold;
+}
+
+@utility paragraph {
+  @apply text-base md:text-lg lg:text-xl;
 }
