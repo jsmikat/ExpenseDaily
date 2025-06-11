@@ -1,6 +1,7 @@
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { Button } from "@/components/ui/button";
 import { TextEffect } from "@/components/ui/text-effect";
+import { RiGithubFill } from "@remixicon/react";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -114,11 +115,12 @@ export default function HeroSection() {
                     key={2}
                     asChild
                     size="lg"
-                    variant="ghost"
+                    variant="outline"
                     className="h-10.5 rounded-xl px-5"
                   >
-                    <Link href="https://github.com/jsmikat/ExpenseDaily">
-                      <span className="text-nowrap">Github Repo</span>
+                    <Link className="flex gap-2" href="https://github.com/jsmikat/ExpenseDaily">
+                      <RiGithubFill />
+                      <span className="text-nowrap">Github Repo.</span>
                     </Link>
                   </Button>
                 </AnimatedGroup>
@@ -126,6 +128,7 @@ export default function HeroSection() {
             </div>
 
             <AnimatedGroup
+              className="mb-8"
               variants={{
                 container: {
                   visible: {
@@ -138,17 +141,17 @@ export default function HeroSection() {
                 ...transitionVariants,
               }}
             >
-              <div className="relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
+              <div className="relative -mr-56 my-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
                 <div
                   aria-hidden
                   className="bg-linear-to-b to-background absolute inset-0 z-10 from-transparent from-35%"
                 />
                 <div
                   id="hero-image"
-                  className="inset-shadow-2xs ring-white bg-white relative mx-auto max-w-6xl overflow-hidden rounded-2xl border border-slate-200 p-4 shadow-lg shadow-zinc-950/15 ring-1"
+                  className="inset-shadow-2xs mb-8 ring-white bg-white relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200 p-4 shadow-lg shadow-zinc-950/15 ring-1"
                 >
                   <Image
-                    className="z-2 border-slate-200/25 aspect-15/8 relative rounded-2xl border"
+                    className="z-2 border-slate-200/25 relative rounded-2xl border"
                     src="/ExpenseDaily.png"
                     alt="app screen"
                     width="2880"

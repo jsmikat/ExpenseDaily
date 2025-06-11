@@ -1,6 +1,3 @@
-// Tremor AreaChart [v1.0.0]
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
@@ -814,7 +811,10 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
               />
             ) : null}
             {categories.map((category) => {
-              const categoryId = `${areaId}-${category.replace(/[^a-zA-Z0-9]/g, "")}`;
+              const categoryId = `${areaId}-${category.replace(
+                /[^a-zA-Z0-9]/g,
+                ""
+              )}`;
               return (
                 <React.Fragment key={category}>
                   <defs key={category}>
