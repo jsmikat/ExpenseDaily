@@ -5,7 +5,7 @@ export interface IExpense extends Document {
   amount: number;
   paymentMethod: string;
   createdAt: Date;
-  user: Schema.Types.ObjectId;
+  user: string;
 }
 
 const ExpenseSchema = new Schema<IExpense>({
@@ -13,7 +13,7 @@ const ExpenseSchema = new Schema<IExpense>({
   amount: { type: Number, required: true },
   paymentMethod: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  user: { type: Schema.Types.ObjectId, ref: "User" },
+  user: { type: String, required: true },
 });
 
 const Expense = models.Expense || model<IExpense>("Expense", ExpenseSchema);

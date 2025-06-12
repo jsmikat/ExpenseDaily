@@ -5,7 +5,6 @@ import NewExpense from "@/components/NewExpense";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getExpenses } from "@/lib/actions/expense.action";
 import { ExpenseParams } from "@/lib/actions/shared.types";
-import { getUserById } from "@/lib/actions/user.action";
 import { cn } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { format, subDays } from "date-fns";
@@ -17,8 +16,7 @@ async function Dashboard() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const mongoUser = await getUserById({ userId });
-  const expenses = await getExpenses({ user: mongoUser._id });
+  const expenses = await getExpenses({ user: userId });
 
   const recentExpenses = await generateLast7DaysData(expenses);
 
@@ -40,10 +38,7 @@ async function Dashboard() {
             </Suspense>
           </div>
           <div className="border-2 border-dark-200 p-8 rounded-lg shadow-xs">
-            <NewExpense
-              mongoUserId={JSON.stringify(mongoUser?._id)}
-              type="create"
-            />
+            <NewExpense type="create" />
           </div>
         </div>
         <div
@@ -86,8 +81,6 @@ async function generateLast7DaysData(expenses: ExpenseParams[]) {
 
   expenses.forEach((expense, index) => {
     const expenseDate = new Date(expense.createdAt);
-
-    // No timezone adjustment needed - already in Bangladesh time from DB
     const year = expenseDate.getFullYear();
     const month = String(expenseDate.getMonth() + 1).padStart(2, "0");
     const day = String(expenseDate.getDate()).padStart(2, "0");
@@ -105,7 +98,6 @@ async function generateLast7DaysData(expenses: ExpenseParams[]) {
     const targetDate = subDays(today, i);
     const dateKey = format(targetDate, "MMM dd");
 
-    // Use local date methods (no UTC conversion)
     const year = targetDate.getFullYear();
     const month = String(targetDate.getMonth() + 1).padStart(2, "0");
     const day = String(targetDate.getDate()).padStart(2, "0");

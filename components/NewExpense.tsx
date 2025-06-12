@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { createExpense, updateExpense } from "@/lib/actions/expense.action";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -42,7 +43,7 @@ interface props {
     amount: number;
     createdAt: Date;
     paymentMethod: string;
-    user: Schema.Types.ObjectId;
+    user: string;
   };
 }
 
@@ -55,7 +56,8 @@ const formSchema = z.object({
   date: z.date(),
 });
 
-const NewExpense = ({ mongoUserId, type, expense }: props) => {
+function NewExpense({ type, expense }: props) {
+  const { userId } = useAuth();
   const router = useRouter();
   const path = usePathname();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -69,7 +71,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (type === "create" && mongoUserId) {
+    if (type === "create" && userId) {
       try {
         const adjustedDate = new Date(data.date);
         adjustedDate.setHours(6, 0, 0, 0);
@@ -77,7 +79,7 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
           name: data.expenseName,
           amount: data.amount,
           paymentMethod: data.paymentMethod,
-          user: JSON.parse(mongoUserId),
+          user: userId,
           createdAt: adjustedDate,
           path,
         });
@@ -226,6 +228,6 @@ const NewExpense = ({ mongoUserId, type, expense }: props) => {
       </Form>
     </div>
   );
-};
+}
 
 export default NewExpense;
