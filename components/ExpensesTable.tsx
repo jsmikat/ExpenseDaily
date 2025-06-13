@@ -11,7 +11,6 @@ import { deleteExpense } from "@/lib/actions/expense.action";
 import { cn } from "@/lib/utils";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { format } from "date-fns";
-import { Schema } from "mongoose";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import NewExpense from "./NewExpense";
@@ -31,7 +30,7 @@ interface Expenses {
   amount: number;
   createdAt: Date;
   paymentMethod: string;
-  user: Schema.Types.ObjectId;
+  user: string;
 }
 
 interface Props {

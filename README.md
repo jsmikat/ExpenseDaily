@@ -63,17 +63,24 @@ expense-tracker/
 ├── app/
 │   ├── api/
 │   ├── dashboard/
+│   ├── page.tsx
 │   └── globals.css
 ├── components/
 │   ├── ui/
 │   ├── ExpensesTable.tsx
 │   ├── NewExpense.tsx
-│   └── OnThisMonth.tsx
+│   ├── HeroSection.tsx
+│   ├── Navbar.tsx
+│   └── AreaChart.tsx
+├── database/
+│   ├──expense.model.ts
+│   └──user.model.ts
 ├── lib/
-│   ├── models/
+│   ├── actions/
 │   ├── utils.ts
-│   └── dbConnect.ts
-└── types/
+│   ├── chartUtils.ts
+│   └── mongoose.ts
+└── hooks/
 ```
 
 ## Getting Started
