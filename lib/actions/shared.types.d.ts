@@ -33,6 +33,8 @@ export interface DeleteExpenseParams {
 }
 export interface GetExpensesParams {
   user: string;
+  month: string;
+  year: string;
 }
 
 export interface CreateUserParams {

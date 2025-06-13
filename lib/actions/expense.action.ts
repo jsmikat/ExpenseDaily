@@ -57,10 +57,52 @@ export async function deleteExpense(params: DeleteExpenseParams) {
 export async function getExpenses(params: GetExpensesParams) {
   try {
     await connectToDatabase();
-    const { user } = params;
-    const expenses = await Expense.find({ user: user });
+    const { user, month, year } = params;
+    const expenses = await Expense.aggregate([
+      {
+        $match: {
+          user: user,
+          $expr: {
+            $and: [
+              { $eq: [{ $year: "$createdAt" }, parseInt(year)] },
+              { $eq: [{ $month: "$createdAt" }, parseInt(month)] },
+            ],
+          },
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+    ]);
     return JSON.parse(JSON.stringify(expenses));
   } catch (error) {
     console.log("⚠️Error getting expenses");
+  }
+}
+
+export async function getLast7DaysExpenses(user: string) {
+  try {
+    await connectToDatabase();
+    const today = new Date();
+    const expenses = await Expense.aggregate([
+      {
+        $match: {
+          user: user,
+          createdAt: {
+            $gte: new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate() - 6
+            ),
+          },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+    return JSON.parse(JSON.stringify(expenses));
+  } catch (error) {
+    console.log("⚠️Error getting last 7 days expenses");
   }
 }

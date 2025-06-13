@@ -29,7 +29,6 @@ import { useAuth } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Schema } from "mongoose";
 import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -219,10 +218,17 @@ function NewExpense({ type, expense }: props) {
           </div>
 
           <Button
-            className="w-full bg-primary-400 hover:bg-primary-200"
+            className="w-full bg-primary-400 hover:bg-primary-200 cursor-pointer"
             type="submit"
+            disabled={form.formState.isSubmitting}
           >
-            Submit
+            {form.formState.isSubmitting
+              ? type === "create"
+                ? "Adding..."
+                : "Updating..."
+              : type === "create"
+              ? "Add Expense"
+              : "Update Expense"}
           </Button>
         </form>
       </Form>

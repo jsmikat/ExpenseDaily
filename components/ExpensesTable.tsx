@@ -55,7 +55,7 @@ function ExpensesTable({ expenses }: Props) {
             <DialogTrigger asChild className="cursor-pointer">
               <TableRow>
                 <TableCell>
-                  {format(new Date(expense.createdAt), "MMM dd")}
+                  {format(new Date(expense.createdAt), "dd")}
                 </TableCell>
                 <TableCell>{expense.name}</TableCell>
                 <TableCell className="text-right">
