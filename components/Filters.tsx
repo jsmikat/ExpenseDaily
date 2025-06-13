@@ -16,7 +16,7 @@ function Filters() {
   const pathname = usePathname();
   const { user } = useUser();
   if (!user) return null;
-  const userCreatedYear = new Date(user.createdAt).getFullYear();
+  const userCreatedYear = new Date(user.createdAt!).getFullYear();
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
