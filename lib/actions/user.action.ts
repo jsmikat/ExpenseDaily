@@ -2,7 +2,6 @@
 
 import Expense from "@/database/expense.model";
 import User from "@/database/user.model";
-import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
 import {
   CreateUserParams,
@@ -23,9 +22,8 @@ export async function createUser(userData: CreateUserParams) {
 export async function updateUser(userData: UpdateUserParams) {
   try {
     connectToDatabase();
-    const { clerkId, updateData, path } = userData;
+    const { clerkId, updateData} = userData;
     await User.findOneAndUpdate({ clerkId }, updateData, { new: true });
-    revalidatePath(path);
   } catch (error) {
     console.error("Error updating user: ", error);
   }
