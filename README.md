@@ -2,7 +2,7 @@
 
 A modern, full-stack expense tracking application built with Next.js 14, featuring real-time expense management, secure authentication, and comprehensive financial insights.
 
-![ss](./public/ExpenseDaily-full.png)
+![ss](./public/ExpenseDailyLanding.png)
 
 ## Features
 
