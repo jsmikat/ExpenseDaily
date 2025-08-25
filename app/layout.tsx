@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { neobrutalism } from "@clerk/themes";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
@@ -32,6 +33,7 @@ export default function RootLayout({
           }}
         >
           {children}
+          <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID || ""} />
         </ClerkProvider>
       </body>
     </html>
