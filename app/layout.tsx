@@ -33,7 +33,7 @@ export default function RootLayout({
           }}
         >
           {children}
-          <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID || ""} />
+          <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID!} />
         </ClerkProvider>
       </body>
     </html>

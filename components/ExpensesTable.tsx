@@ -40,57 +40,78 @@ interface Props {
 function ExpensesTable({ expenses }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const path = usePathname();
+  const groupedExpenses = expenses.reduce((acc, expense) => {
+    const dateKey = format(new Date(expense.createdAt), "MMM dd");
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(expense);
+    return acc;
+  }, {} as Record<string, Expenses[]>);
+
   return (
     <Table className="mt-4">
       <TableHeader>
         <TableRow>
-          <TableHead>Date</TableHead>
+          <TableHead className="w-24">Date</TableHead>
           <TableHead>Expenses</TableHead>
           <TableHead className="text-right">Amount</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {expenses.map((expense, index) => (
-          <Dialog key={index}>
-            <DialogTrigger asChild className="cursor-pointer">
-              <TableRow>
-                <TableCell>
-                  {format(new Date(expense.createdAt), "dd")}
-                </TableCell>
-                <TableCell>{expense.name}</TableCell>
-                <TableCell className="text-right">
-                  {expense.amount} tk
-                </TableCell>
-              </TableRow>
-            </DialogTrigger>
-            <DialogContent className="w-[320px] sm:w-[420px] md:w-full rounded-lg">
-              <DialogHeader>
-                <DialogTitle>
-                  <h1 className="font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
-                    Edit Expense
-                  </h1>
-                </DialogTitle>
-                <DialogDescription>
-                  <p>Update Your Expense Details Below</p>
-                </DialogDescription>
-              </DialogHeader>
+        {Object.entries(groupedExpenses).map(([date, dateExpenses]) => (
+          <>
+            {dateExpenses.map((expense, index) => (
+              <Dialog key={expense._id}>
+                <DialogTrigger asChild className="cursor-pointer">
+                  <TableRow>
+                    {index === 0 && (
+                      <TableCell
+                        rowSpan={dateExpenses.length}
+                        className="align-top font-semibold sticky left-0 border bg-white dark:bg-dark-400"
+                      >
+                        {date}
+                      </TableCell>
+                    )}
+                    <TableCell>{expense.name}</TableCell>
+                    <TableCell className="text-right">
+                      {expense.amount} tk
+                    </TableCell>
+                  </TableRow>
+                </DialogTrigger>
+                <DialogContent className="w-[320px] sm:w-[420px] md:w-full rounded-lg">
+                  <DialogHeader>
+                    <DialogTitle>
+                      <h1 className="font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl">
+                        Edit Expense
+                      </h1>
+                    </DialogTitle>
+                    <DialogDescription>
+                      <p>Update Your Expense Details Below</p>
+                    </DialogDescription>
+                  </DialogHeader>
 
-              <NewExpense type="edit" expense={expense} />
-              <DialogClose asChild>
-                <Button
-                  onClick={async () => {
-                    setIsSubmitting(true);
-                    await deleteExpense({ expenseId: expense._id, path });
-                    setIsSubmitting(false);
-                  }}
-                  disabled={isSubmitting}
-                  className={cn("bg-danger-400", isSubmitting && "opacity-50")}
-                >
-                  Delete
-                </Button>
-              </DialogClose>
-            </DialogContent>
-          </Dialog>
+                  <NewExpense type="edit" expense={expense} />
+                  <DialogClose asChild>
+                    <Button
+                      onClick={async () => {
+                        setIsSubmitting(true);
+                        await deleteExpense({ expenseId: expense._id, path });
+                        setIsSubmitting(false);
+                      }}
+                      disabled={isSubmitting}
+                      className={cn(
+                        "bg-danger-400",
+                        isSubmitting && "opacity-50"
+                      )}
+                    >
+                      Delete
+                    </Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
+            ))}
+          </>
         ))}
       </TableBody>
     </Table>
