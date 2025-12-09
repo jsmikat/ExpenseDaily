@@ -50,7 +50,7 @@ function ExpensesTable({ expenses }: Props) {
   }, {} as Record<string, Expenses[]>);
 
   return (
-    <Table className="mt-4">
+    <Table className="mt-4 size-full">
       <TableHeader>
         <TableRow>
           <TableHead className="w-24">Date</TableHead>

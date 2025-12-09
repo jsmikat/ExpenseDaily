@@ -13,14 +13,15 @@ import {
 export async function createExpense(params: CreateExpenseParams) {
   try {
     await connectToDatabase();
-    const { name, amount, paymentMethod, createdAt, user, path } = params;
-    await Expense.create({
-      name,
-      amount,
-      paymentMethod,
+    const { expenses, createdAt, user, path } = params;
+    const expenseDocs = expenses.map((expense) => ({
+      name: expense.expenseName,
+      amount: expense.amount,
+      paymentMethod: expense.paymentMethod,
       user,
       createdAt,
-    });
+    }));
+    await Expense.insertMany(expenseDocs);
     revalidatePath(path);
   } catch (error) {
     console.log("⚠️Error creating expense");

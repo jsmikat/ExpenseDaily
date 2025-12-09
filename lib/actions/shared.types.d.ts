@@ -1,9 +1,11 @@
 import { IUser } from "@/database/user.model";
 
 export interface CreateExpenseParams {
-  name: string;
-  amount: number;
-  paymentMethod: string;
+  expenses: Array<{
+    expenseName: string;
+    amount: number;
+    paymentMethod: string;
+  }>;
   user: string | null;
   createdAt: Date;
   path: string;
