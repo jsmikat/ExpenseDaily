@@ -28,9 +28,9 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 interface props {
@@ -47,11 +47,15 @@ interface props {
 }
 
 const formSchema = z.object({
-  expenseName: z
-    .string()
-    .min(2, { message: "Expense name must be at least 2 characters long" }),
-  amount: z.coerce.number({ message: "Amount must be a number" }),
-  paymentMethod: z.string(),
+  expenses: z.array(
+    z.object({
+      expenseName: z
+        .string()
+        .min(2, { message: "Expense name must be at least 2 characters long" }),
+      amount: z.coerce.number({ message: "Amount must be a number" }),
+      paymentMethod: z.string(),
+    })
+  ),
   date: z.date(),
 });
 
@@ -62,11 +66,28 @@ function NewExpense({ type, expense }: props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      expenseName: expense?.name || "",
-      amount: expense?.amount || 0,
-      paymentMethod: expense?.paymentMethod || "Cash",
+      expenses: expense
+        ? [
+            {
+              expenseName: expense.name,
+              amount: expense.amount,
+              paymentMethod: expense.paymentMethod,
+            },
+          ]
+        : [
+            {
+              expenseName: "",
+              amount: 0,
+              paymentMethod: "Cash",
+            },
+          ],
       date: expense?.createdAt ? new Date(expense.createdAt) : new Date(),
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "expenses",
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -75,9 +96,7 @@ function NewExpense({ type, expense }: props) {
         const adjustedDate = new Date(data.date);
         adjustedDate.setHours(6, 0, 0, 0);
         await createExpense({
-          name: data.expenseName,
-          amount: data.amount,
-          paymentMethod: data.paymentMethod,
+          expenses: data.expenses,
           user: userId,
           createdAt: adjustedDate,
           path,
@@ -95,9 +114,9 @@ function NewExpense({ type, expense }: props) {
         adjustedDate.setHours(6, 0, 0, 0);
         await updateExpense({
           expenseId: expense._id,
-          name: data.expenseName,
-          amount: data.amount,
-          paymentMethod: data.paymentMethod,
+          name: data.expenses[0].expenseName,
+          amount: data.expenses[0].amount,
+          paymentMethod: data.expenses[0].paymentMethod,
           createdAt: data.date,
           path,
         });
@@ -113,71 +132,114 @@ function NewExpense({ type, expense }: props) {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-2 lg:space-y-8"
         >
-          <FormField
-            control={form.control}
-            name="expenseName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Expense Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter the expense name (e.g., Groceries, Rent, Utilities)"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Enter the amount spent (e.g., 50.00)"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex gap-4 flex-col lg:flex-row items-center justify-between">
-            <FormField
-              control={form.control}
-              name="paymentMethod"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Payment Method</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a payment method" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Cash">Cash</SelectItem>
-                      <SelectItem value="Card">Card</SelectItem>
-                      <SelectItem value="Bank Transfer">
-                        Bank Transfer
-                      </SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
+          {fields.map((field, index) => (
+            <div
+              key={field.id}
+              className="space-y-2 lg:space-y-4 p-4 border rounded-lg relative"
+            >
+              {fields.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white"
+                  onClick={() => remove(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               )}
-            />
+              <FormField
+                control={form.control}
+                name={`expenses.${index}.expenseName`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Expense Name {fields.length > 1 && `#${index + 1}`}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter the expense name (e.g., Groceries, Rent, Utilities)"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex gap-4 flex-col lg:flex-row items-start justify-between">
+                <FormField
+                  control={form.control}
+                  name={`expenses.${index}.amount`}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter the amount spent (e.g., 50.00)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`expenses.${index}.paymentMethod`}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Payment Method</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a payment method" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Cash">Cash</SelectItem>
+                          <SelectItem value="Card">Card</SelectItem>
+                          <SelectItem value="E-wallet">E-wallet</SelectItem>
+                          <SelectItem value="Bank Transfer">
+                            Bank Transfer
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          ))}
+
+          {type === "create" && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full border-2 border-primary-400"
+              onClick={() =>
+                append({
+                  expenseName: "",
+                  amount: 0,
+                  paymentMethod: "Cash",
+                })
+              }
+            >
+              Add More
+            </Button>
+          )}
+
+          <div className="flex gap-4 flex-col lg:flex-row items-center justify-between">
             <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
                 <FormItem className="w-full flex flex-col">
-                  <FormLabel className="my-1">Date of Expense</FormLabel>
+                  <FormLabel>Date of Expense</FormLabel>
                   <Popover modal={true}>
                     <PopoverTrigger asChild>
                       <FormControl>

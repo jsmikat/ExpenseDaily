@@ -50,9 +50,9 @@ async function Dashboard(Props: { searchParams: SearchParams }) {
           </div>
         </div>
         <div className="h-full border-dark-200 p-4 rounded-lg shadow-xs border-2">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 h-full">
             <Filters />
-            <ScrollArea className="w-full h-[480px]">
+            <ScrollArea className="h-full">
               {expenses!.length === 0 ? (
                 <div className="mt-12 flex flex-col gap-2 items-center justify-center">
                   <Image
