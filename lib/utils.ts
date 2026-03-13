@@ -46,7 +46,7 @@ export async function generateLast7DaysData(
 
   const chartData = [];
 
-  for (let i = 30; i >= 0; i--) {
+  for (let i = 6; i >= 0; i--) {
     const targetDate = subDays(today, i);
     const dateKey = format(targetDate, "MMM dd");
     const lookupKey = format(targetDate, "yyyy-MM-dd");
