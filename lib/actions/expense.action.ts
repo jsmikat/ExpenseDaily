@@ -1,6 +1,7 @@
 "use server";
 
 import Expense from "@/database/expense.model";
+import { startOfDay, subDays } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../mongoose";
 import {
@@ -24,7 +25,8 @@ export async function createExpense(params: CreateExpenseParams) {
     await Expense.insertMany(expenseDocs);
     revalidatePath(path);
   } catch (error) {
-    console.log("⚠️Error creating expense");
+    console.error("⚠️Error creating expense:", error);
+    throw error;
   }
 }
 
@@ -36,11 +38,12 @@ export async function updateExpense(params: UpdateExpenseParams) {
       name,
       amount,
       paymentMethod,
-      createdAt, // Assuming you want to update the createdAt to now
+      createdAt,
     });
     revalidatePath(path);
   } catch (error) {
-    console.log("⚠️Error updating expense");
+    console.error("⚠️Error updating expense:", error);
+    throw error;
   }
 }
 
@@ -51,7 +54,8 @@ export async function deleteExpense(params: DeleteExpenseParams) {
     await Expense.findByIdAndDelete(expenseId);
     revalidatePath(path);
   } catch (error) {
-    console.log("⚠️Error deleting expense");
+    console.error("⚠️Error deleting expense:", error);
+    throw error;
   }
 }
 
@@ -77,7 +81,8 @@ export async function getExpenses(params: GetExpensesParams) {
     ]);
     return JSON.parse(JSON.stringify(expenses));
   } catch (error) {
-    console.log("⚠️Error getting expenses");
+    console.error("⚠️Error getting expenses:", error);
+    throw error;
   }
 }
 
@@ -85,25 +90,23 @@ export async function getLast7DaysExpenses(user: string) {
   try {
     await connectToDatabase();
     const today = new Date();
+    const sevenDaysAgo = startOfDay(subDays(today, 6));
     const expenses = await Expense.aggregate([
       {
         $match: {
           user: user,
           createdAt: {
-            $gte: new Date(
-              today.getFullYear(),
-              today.getMonth(),
-              today.getDate() - 6
-            ),
+            $gte: sevenDaysAgo,
           },
         },
       },
       {
-        $sort: { _id: 1 },
+        $sort: { createdAt: 1 },
       },
     ]);
     return JSON.parse(JSON.stringify(expenses));
   } catch (error) {
-    console.log("⚠️Error getting last 7 days expenses");
+    console.error("⚠️Error getting last 7 days expenses:", error);
+    throw error;
   }
 }

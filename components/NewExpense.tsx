@@ -52,7 +52,9 @@ const formSchema = z.object({
       expenseName: z
         .string()
         .min(2, { message: "Expense name must be at least 2 characters long" }),
-      amount: z.coerce.number({ message: "Amount must be a number" }),
+      amount: z.coerce
+        .number({ message: "Amount must be a number" })
+        .positive({ message: "Amount must be greater than 0" }),
       paymentMethod: z.string(),
     })
   ),
@@ -117,9 +119,10 @@ function NewExpense({ type, expense }: props) {
           name: data.expenses[0].expenseName,
           amount: data.expenses[0].amount,
           paymentMethod: data.expenses[0].paymentMethod,
-          createdAt: data.date,
+          createdAt: adjustedDate,
           path,
         });
+        router.refresh();
       } catch (error) {
         console.error("⚠️Error updating expense: ", error);
       }
